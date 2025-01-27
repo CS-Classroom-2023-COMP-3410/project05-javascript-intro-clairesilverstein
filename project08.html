@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Story Game</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #89cff0, #f4a261);
+      padding: 20px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      color: #ffffff;
+    }
+
+    #storyContainer {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      width: 100%;
+      max-width: 800px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    #illustration {
+      width: 200px;
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #ffe082, #ffab91);
+      font-size: 100px; /* Make emojis larger */
+      color: #555;
+      text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    #storyContent {
+      flex: 1;
+    }
+
+    #storyText {
+      margin-bottom: 20px;
+      font-size: 18px;
+      line-height: 1.5;
+      color: #333;
+    }
+
+    .choices {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .choices button {
+      padding: 10px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background: #007bff;
+      color: white;
+      transition: background 0.3s ease;
+    }
+
+    .choices button:hover {
+      background: #0056b3;
+    }
+
+    #progressBar {
+      width: 100%;
+      background: #ddd;
+      border-radius: 5px;
+      height: 10px;
+      margin-bottom: 20px;
+    }
+
+    #progressBarFill {
+      height: 100%;
+      width: 0%;
+      background: #4caf50;
+      border-radius: 5px;
+    }
+
+    #controls {
+      display: flex;
+      gap: 10px;
+    }
+
+    #controls button {
+      padding: 10px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    #resetButton {
+      background: #dc3545;
+      color: white;
+    }
+
+    #resetButton:hover {
+      background: #a71d2a;
+    }
+
+    #saveButton {
+      background: #28a745;
+      color: white;
+    }
+
+    #saveButton:hover {
+      background: #218838;
+    }
+
+    #loadButton {
+      background: #ffc107;
+      color: white;
+    }
+
+    #loadButton:hover {
+      background: #e0a800;
+    }
+  </style>
+</head>
+<body>
+  <h1>Interactive Story Game</h1>
+  <div id="storyContainer">
+    <div id="illustration">✨</div>
+    <div id="storyContent">
+      <div id="storyText"></div>
+      <div class="choices" id="choicesContainer"></div>
+      <div id="progressBar">
+        <div id="progressBarFill"></div>
+      </div>
+    </div>
+  </div>
+  <div id="controls">
+    <button id="resetButton">Reset Game</button>
+    <button id="saveButton">Save Progress</button>
+    <button id="loadButton">Load Progress</button>
+  </div>
+  <script src="js/project08.js"></script>
+</body>
+</html>

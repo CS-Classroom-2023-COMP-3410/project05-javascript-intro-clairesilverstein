@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customizable Drawing Canvas</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #f9f9f9, #e6e6e6);
+      color: #333;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 2rem;
+      color: #007bff;
+      text-shadow: 1px 1px 2px #ddd;
+    }
+
+    #controls {
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+      padding: 10px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    #controls label {
+      font-size: 14px;
+      margin-right: 5px;
+    }
+
+    #controls input[type="color"],
+    #controls input[type="number"],
+    #controls button,
+    #controls select {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    #controls input[type="color"] {
+      border: none;
+      height: 40px;
+      width: 40px;
+      cursor: pointer;
+    }
+
+    #controls button {
+      background: #007bff;
+      color: white;
+      cursor: pointer;
+    }
+
+    #controls button:hover {
+      background: #0056b3;
+    }
+
+    #controls select {
+      background: #f9f9f9;
+      cursor: pointer;
+    }
+
+    canvas {
+      border: 3px solid #007bff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      background: #ffffff;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Customizable Drawing Canvas</h1>
+  <div id="controls">
+    <label for="brushColor">Tool Color:</label>
+    <input type="color" id="brushColor" value="#000000">
+
+    <label for="brushSize">Tool Size:</label>
+    <input type="number" id="brushSize" value="5" min="1" max="50">
+
+    <label for="backgroundColor">Background Color:</label>
+    <input type="color" id="backgroundColor" value="#ffffff">
+
+    <label for="drawingTool">Tool:</label>
+    <select id="drawingTool">
+      <option value="pen">Pen</option>
+      <option value="pencil">Pencil</option>
+      <option value="paintbrush">Paintbrush</option>
+      <option value="eraser">Eraser</option>
+    </select>
+
+    <button id="undoButton">Undo</button>
+    <button id="clearButton">Clear</button>
+    <button id="saveButton">Save</button>
+  </div>
+  <canvas id="drawingCanvas" width="800" height="600"></canvas>
+  <script>
+    const canvas = document.getElementById("drawingCanvas");
+    const ctx = canvas.getContext("2d");
+
+    const brushColorInput = document.getElementById("brushColor");
+    const brushSizeInput = document.getElementById("brushSize");
+    const backgroundColorInput = document.getElementById("backgroundColor");
+    const drawingToolSelect = document.getElementById("drawingTool");
+    const undoButton = document.getElementById("undoButton");
+    const clearButton = document.getElementById("clearButton");
+    const saveButton = document.getElementById("saveButton");
+
+    let drawing = false;
+    let brushColor = brushColorInput.value;
+    let brushSize = parseInt(brushSizeInput.value, 10);
+    let backgroundColor = backgroundColorInput.value;
+    let drawingTool = drawingToolSelect.value;
+    let strokes = [];
+    let currentStroke = [];
+
+    function initializeCanvas() {
+      ctx.globalAlpha = 1; // Reset opacity
+      ctx.fillStyle = backgroundColor;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function startDrawing(e) {
+      drawing = true;
+      currentStroke = [];
+      addPointToStroke(e);
+    }
+
+    function stopDrawing() {
+      if (drawing) {
+        drawing = false;
+        strokes.push(currentStroke);
+        currentStroke = [];
+      }
+    }
+
+    function draw(e) {
+      if (!drawing) return;
+      addPointToStroke(e);
+      redrawCanvas();
+    }
+
+    function addPointToStroke(e) {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const size = drawingTool === "eraser" ? brushSize * 2 : brushSize;
+      const color = drawingTool === "eraser" ? backgroundColor : brushColor;
+
+      currentStroke.push({ x, y, color, size, tool: drawingTool });
+    }
+
+    function redrawCanvas() {
+      ctx.fillStyle = backgroundColor;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      strokes.forEach((stroke) => drawStroke(stroke));
+      drawStroke(currentStroke);
+    }
+
+    function drawStroke(stroke) {
+      if (stroke.length === 0) return;
+      ctx.beginPath();
+
+      stroke.forEach((point, index) => {
+        ctx.lineWidth = point.size;
+        ctx.strokeStyle = point.color;
+        ctx.globalAlpha = 1; // Ensure full opacity for all strokes
+
+        // Tool-specific behavior
+        switch (point.tool) {
+          case "pen":
+            ctx.lineCap = "butt";
+            break;
+
+          case "pencil":
+            ctx.globalAlpha = 0.5;
+            ctx.lineCap = "round";
+            break;
+
+          case "paintbrush":
+            ctx.globalAlpha = 0.6;
+            ctx.lineCap = "round";
+            ctx.shadowColor = point.color; // Match shadow color to brush color
+            ctx.shadowBlur = point.size / 2; // Soft edges for paint effect
+            ctx.globalCompositeOperation = "source-over"; // Blend strokes
+            break;
+
+          case "eraser":
+            ctx.strokeStyle = backgroundColor;
+            ctx.lineCap = "round";
+            ctx.shadowBlur = 0; // Remove shadow effect
+            break;
+        }
+
+        if (index === 0) {
+          ctx.moveTo(point.x, point.y);
+        } else {
+          ctx.lineTo(point.x, point.y);
+        }
+      });
+
+      ctx.stroke();
+      ctx.shadowBlur = 0; // Reset shadow after paintbrush
+    }
+
+    function undoLastStroke() {
+      if (strokes.length > 0) {
+        strokes.pop(); // Remove the last stroke
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
+        initializeCanvas(); // Reset the background color
+        redrawCanvas(); // Redraw all remaining strokes
+      }
+    }
+
+    function clearCanvas() {
+      ctx.globalAlpha = 1; // Reset opacity
+      ctx.fillStyle = backgroundColor; // Reset to the selected background color
+      ctx.fillRect(0, 0, canvas.width, canvas.height); // Clear canvas
+      strokes = []; // Clear strokes
+    }
+
+    function saveCanvasAsImage() {
+      const link = document.createElement("a");
+      link.download = "drawing.png";
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    }
+
+    canvas.addEventListener("mousedown", startDrawing);
+    canvas.addEventListener("mouseup", stopDrawing);
+    canvas.addEventListener("mousemove", draw);
+
+    brushColorInput.addEventListener("input", (e) => {
+      brushColor = e.target.value;
+    });
+
+    brushSizeInput.addEventListener("input", (e) => {
+      brushSize = parseInt(e.target.value, 10);
+    });
+
+    backgroundColorInput.addEventListener("input", (e) => {
+      backgroundColor = e.target.value;
+      redrawCanvas();
+    });
+
+    drawingToolSelect.addEventListener("change", (e) => {
+      drawingTool = e.target.value;
+    });
+
+    undoButton.addEventListener("click", undoLastStroke);
+    clearButton.addEventListener("click", clearCanvas);
+    saveButton.addEventListener("click", saveCanvasAsImage);
+
+    initializeCanvas();
+  </script>
+</body>
+</html>

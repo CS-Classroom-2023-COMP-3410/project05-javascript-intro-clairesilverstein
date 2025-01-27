@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Interactive Periodic Table</title>
+  <!-- Inline CSS -->
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+      padding: 20px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Modern, clean font */
+      font-size: 2.5em; /* Larger font size */
+      background: linear-gradient(90deg, #6a11cb, #2575fc); /* Attractive gradient background */
+      color: white; /* Contrast text color */
+      border-radius: 10px; /* Rounded corners for a modern look */
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    }
+
+
+    .search-container {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    #search {
+      width: 280px;
+      padding: 5px 10px;
+      font-size: 16px;
+    }
+    #searchBtn {
+      padding: 6px 12px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    /* Periodic table grid: 18 columns, enough for groups 1–18 */
+    .periodic-table {
+      display: grid;
+      grid-template-columns: repeat(18, 3.7em);
+      grid-auto-rows: 5em;
+      gap: 5px;
+      justify-content: center;
+      margin: 0 auto;
+      max-width: 90%;
+    }
+
+    .element-cell {
+      background-color: #f0f0f0;
+      border: 1px solid #ccc;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+      padding: 3px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .element-cell:hover {
+      background-color: #e7e7e7;
+      transform: scale(1.1); /* Makes the box 10% larger on hover */
+      z-index: 1; /* Ensures the hovered element stays above others */
+      transition: transform 0.2s ease; /* Smooth transition for resizing */
+}
+
+    .symbol {
+      font-size: 1.1em;
+      font-weight: bold;
+    }
+
+    .atomic-number {
+      font-size: 0.8em;
+      position: absolute;
+      top: 2px;
+      left: 4px;
+    }
+
+    /* Highlight the selected element */
+    .selected {
+      background-color: #ffeb3b; /* bright highlight */
+    }
+
+    /* Highlight for elements in the same group */
+    .same-group {
+      background-color: #ffeeba;
+    }
+
+    /* Element information panel */
+    #elementInfo {
+      margin-top: 20px;
+      text-align: center;
+      min-height: 50px;
+      font-size: 1.1em;
+    }
+  </style>
+</head>
+<body>
+  <h1>Interactive Periodic Table</h1>
+  
+  <div class="search-container">
+    <input 
+      type="text" 
+      id="search" 
+      placeholder="Search by name, symbol, or atomic number..."
+    />
+    <button id="searchBtn">Search</button>
+  </div>
+  
+  <!-- Periodic Table Grid -->
+  <div class="periodic-table" id="periodicTable"></div>
+
+  <!-- Element Information Display -->
+  <div id="elementInfo"></div>
+
+  <!-- JavaScript -->
+  <script src="js/project06.js"></script>
+</body>
+</html>

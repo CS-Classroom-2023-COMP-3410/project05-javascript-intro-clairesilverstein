@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Interactive Quiz App</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: #fef6e4;
+      padding: 20px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 2.5rem;
+      color: #333;
+      text-align: center;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    #quizContainer {
+      width: 100%;
+      max-width: 700px;
+      background: #fff;
+      border: 3px solid #d4af37;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      background-image: repeating-linear-gradient(45deg, #fdf9f3 0%, #f7eed7 25%, #fdf9f3 50%, #f7eed7 75%, #fdf9f3 100%);
+    }
+
+    .question {
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+      color: #5a5a5a;
+    }
+
+    .options {
+      list-style: none;
+      padding: 0;
+    }
+
+    .options li {
+      margin: 10px 0;
+    }
+
+    .options input {
+      margin-right: 10px;
+      transform: scale(1.2);
+    }
+
+    .feedback {
+      margin-top: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    #nextButton,
+    #restartButton {
+      display: inline-block;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    #nextButton {
+      background: #4caf50;
+      color: white;
+      transition: background 0.3s;
+    }
+
+    #nextButton:hover {
+      background: #45a049;
+    }
+
+    #restartButton {
+      background: #dc3545;
+      color: white;
+      transition: background 0.3s;
+    }
+
+    #restartButton:hover {
+      background: #a71d2a;
+    }
+
+    #results {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #333;
+    }
+
+    #results h2 {
+      font-size: 2rem;
+      color: #5a5a5a;
+    }
+
+    #results ul {
+      margin-top: 15px;
+      padding-left: 20px;
+      color: #444;
+    }
+
+    #results ul li {
+      margin-bottom: 10px;
+    }
+
+    .quiz-decor {
+      position: absolute;
+      top: 10%;
+      left: 5%;
+      width: 150px;
+      height: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>Quiz</h1>
+  <div id="quizContainer">
+    <div id="questionSection">
+      <div class="question" id="questionText"></div>
+      <ul class="options" id="optionsList"></ul>
+      <div class="feedback" id="feedback"></div>
+    </div>
+    <button id="nextButton">Next</button>
+    <button id="restartButton" style="display: none;">Restart</button>
+  </div>
+  <div id="results" style="display: none;"></div>
+  <script>
+    // ========== Quiz Data ==========
+    const questions = [
+        {
+          question: "What is the capital of France?",
+          options: ["Berlin", "Madrid", "Paris", "Rome"],
+          correct: 2,
+        },
+        {
+          question: "Which planet is known as the Red Planet?",
+          options: ["Earth", "Mars", "Jupiter", "Saturn"],
+          correct: 1,
+        },
+        {
+          question: "What is the largest ocean on Earth?",
+          options: ["Atlantic Ocean", "Indian Ocean", "Pacific Ocean", "Arctic Ocean"],
+          correct: 2,
+        },
+        {
+          question: "Who wrote 'Hamlet'?",
+          options: ["Charles Dickens", "William Shakespeare", "Mark Twain", "Leo Tolstoy"],
+          correct: 1,
+        },
+        {
+          question: "What is the chemical symbol for water?",
+          options: ["H2O", "O2", "CO2", "HO"],
+          correct: 0,
+        },
+      ];
+
+    // ========== Global Variables ==========
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let userAnswers = [];
+
+    // DOM Elements
+    const questionText = document.getElementById("questionText");
+    const optionsList = document.getElementById("optionsList");
+    const feedback = document.getElementById("feedback");
+    const nextButton = document.getElementById("nextButton");
+    const restartButton = document.getElementById("restartButton");
+    const results = document.getElementById("results");
+
+    // ========== Load Question ==========
+    function loadQuestion() {
+      const currentQuestion = questions[currentQuestionIndex];
+      questionText.textContent = `${currentQuestionIndex + 1}. ${currentQuestion.question}`;
+      optionsList.innerHTML = "";
+
+      currentQuestion.options.forEach((option, index) => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <label>
+            <input type="radio" name="option" value="${index}">
+            ${option}
+          </label>
+        `;
+        optionsList.appendChild(li);
+      });
+
+      feedback.textContent = "";
+      nextButton.disabled = true; // Disable next button until an answer is selected
+    }
+
+    // ========== Check Answer ==========
+    function checkAnswer() {
+      const selectedOption = document.querySelector('input[name="option"]:checked');
+      if (!selectedOption) {
+        feedback.textContent = "Please select an answer.";
+        return false;
+      }
+
+      const answer = parseInt(selectedOption.value, 10);
+      userAnswers[currentQuestionIndex] = answer;
+
+      if (answer === questions[currentQuestionIndex].correct) {
+        feedback.textContent = "Correct!";
+        feedback.style.color = "green";
+      } else {
+        feedback.textContent = `Wrong! The correct answer is "${questions[currentQuestionIndex].options[questions[currentQuestionIndex].correct]}".`;
+        feedback.style.color = "red";
+      }
+
+      nextButton.disabled = false; // Enable the next button after answering
+      return true;
+    }
+
+    // ========== Move to the Next Question ==========
+    function nextQuestion() {
+      const selectedOption = document.querySelector('input[name="option"]:checked');
+
+      // Ensure user has selected an answer
+      if (!selectedOption) {
+        feedback.textContent = "Please select an answer before proceeding.";
+        return;
+      }
+
+      const answer = parseInt(selectedOption.value, 10);
+
+      // Check if the answer is correct and update score
+      if (answer === questions[currentQuestionIndex].correct) {
+        score++;
+      }
+
+      if (currentQuestionIndex < questions.length - 1) {
+        currentQuestionIndex++;
+        loadQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    // ========== Show Results ==========
+    function showResults() {
+      questionText.style.display = "none";
+      optionsList.style.display = "none";
+      feedback.style.display = "none";
+      nextButton.style.display = "none";
+      restartButton.style.display = "block";
+
+      results.style.display = "block";
+      results.innerHTML = `
+        <h2>Quiz Completed</h2>
+        <p>Your Score: ${score}/${questions.length}</p>
+        <h3>Review Answers:</h3>
+        <ul>
+          ${questions
+            .map(
+              (q, index) =>
+                `<li>
+                  <strong>${index + 1}. ${q.question}</strong><br>
+                  Your Answer: ${
+                    userAnswers[index] !== undefined
+                      ? q.options[userAnswers[index]]
+                      : "No answer"
+                  }<br>
+                  Correct Answer: ${q.options[q.correct]}
+                </li>`
+            )
+            .join("")}
+        </ul>
+      `;
+    }
+
+    // ========== Restart Quiz ==========
+    function restartQuiz() {
+      currentQuestionIndex = 0;
+      score = 0;
+      userAnswers = [];
+
+      questionText.style.display = "block";
+      optionsList.style.display = "block";
+      feedback.style.display = "block";
+      nextButton.style.display = "block";
+      restartButton.style.display = "none";
+
+      results.style.display = "none";
+
+      loadQuestion();
+    }
+
+    // ========== Event Listeners ==========
+    optionsList.addEventListener("change", checkAnswer);
+    nextButton.addEventListener("click", nextQuestion);
+    restartButton.addEventListener("click", restartQuiz);
+
+    // ========== Initialize Quiz ==========
+    loadQuestion();
+  </script>
+</body>
+</html>

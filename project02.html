@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Interactive To-Do List</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: #fef6e4;
+      margin-top: 50px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-family: 'Patrick Hand', cursive;
+      font-size: 3rem;
+      color: #333;
+    }
+
+    #todoApp {
+      width: 90%;
+      max-width: 600px;
+      background: #fff;
+      border: 2px solid #d4c5a9;
+      border-radius: 15px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      padding: 20px;
+      position: relative;
+      background: linear-gradient(145deg, #fff 98%, #f3e3d7 2%);
+    }
+
+    #todoInputContainer {
+      display: flex;
+      margin-bottom: 20px;
+    }
+
+    #newTaskInput {
+      flex: 1;
+      padding: 10px;
+      border: 2px dashed #a58c69;
+      border-radius: 5px;
+      background: #fff9f0;
+      font-family: 'Patrick Hand', cursive;
+      font-size: 1.2rem;
+    }
+
+    #addTaskButton {
+      margin-left: 10px;
+      padding: 10px 15px;
+      background: #f4a261;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-family: 'Patrick Hand', cursive;
+      font-size: 1.2rem;
+      transition: background 0.3s;
+    }
+
+    #addTaskButton:hover {
+      background: #e76f51;
+    }
+
+    .filter-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .filter-buttons button {
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-family: 'Patrick Hand', cursive;
+      font-size: 1rem;
+      background: #f4a261;
+      color: white;
+    }
+
+    .filter-buttons button.active {
+      background: #e76f51;
+    }
+
+    #taskList {
+      list-style: none;
+      padding: 20px;
+      background: #fff;
+      border: 2px dashed #d4c5a9;
+      border-radius: 10px;
+      box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.1);
+      background: #fff9f0;
+    }
+
+    .task {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fff;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      font-family: 'Patrick Hand', cursive;
+      font-size: 1.2rem;
+      border: 1px solid #d4c5a9;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+    }
+
+    .task.completed {
+      text-decoration: line-through;
+      color: #888;
+      background: #f0e6dd;
+    }
+
+    .task span {
+      flex: 1;
+      padding-left: 10px;
+    }
+
+    .task button {
+      margin-left: 10px;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-family: 'Patrick Hand', cursive;
+      font-size: 1rem;
+    }
+
+    .editButton {
+      background: #0096c7;
+      color: white;
+    }
+
+    .editButton:hover {
+      background: #0077b6;
+    }
+
+    .deleteButton {
+      background: #d90429;
+      color: white;
+    }
+
+    .deleteButton:hover {
+      background: #9b2226;
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+</head>
+<body>
+  <h1>To-Do List</h1>
+  <div id="todoApp">
+    <div id="todoInputContainer">
+      <input type="text" id="newTaskInput" placeholder="Add a new task" />
+      <button id="addTaskButton">Add</button>
+    </div>
+    <div class="filter-buttons">
+      <button class="filterButton active" data-filter="all">All</button>
+      <button class="filterButton" data-filter="completed">Completed</button>
+      <button class="filterButton" data-filter="pending">Pending</button>
+    </div>
+    <ul id="taskList"></ul>
+  </div>
+
+  <script src="js/project02.js"></script>
+</body>
+</html>

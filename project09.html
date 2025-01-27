@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sorting Visualization Tool</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #89cff0, #f4a261);
+      padding: 20px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      color: #ffffff;
+    }
+
+    #controls {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+      align-items: center;
+    }
+
+    #controls div {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #controls select,
+    #controls input,
+    #controls button {
+      padding: 10px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #controls select {
+      background: #fff;
+    }
+
+    #controls button {
+      background: #007bff;
+      color: white;
+    }
+
+    #controls button:hover {
+      background: #0056b3;
+    }
+
+    #arrayContainer {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      height: 350px;
+      width: 100%;
+      max-width: 800px;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 10px;
+      gap: 5px;
+    }
+
+    .bar {
+      width: 25px;
+      background: #007bff;
+      text-align: center;
+      color: #cccaca; /* Grey text for better visibility */
+      font-size: 14px;
+      line-height: 20px;
+      border-radius: 3px;
+    }
+
+    .bar.comparing {
+      background: #ffc107;
+    }
+
+    .bar.sorted {
+      background: #28a745;
+    }
+  </style>
+</head>
+<body>
+  <h1>Sorting Visualization Tool</h1>
+  <div id="controls">
+    <div>
+      <label for="algorithmSelect">Algorithm:</label>
+      <select id="algorithmSelect">
+        <option value="bubbleSort">Bubble Sort</option>
+        <option value="insertionSort">Insertion Sort</option>
+      </select>
+    </div>
+    <div>
+      <label for="speedSlider">Speed:</label>
+      <input type="range" id="speedSlider" min="1" max="10" step="1" value="5">
+      <span id="speedLabel">Medium</span>
+    </div>
+    <div>
+      <button id="sortButton">Sort</button>
+      <button id="pausePlayButton" disabled>Pause</button>
+      <button id="stepForwardButton" disabled>Step Forward</button>
+      <button id="stepBackwardButton" disabled>Step Backward</button>
+      <button id="resetButton">Reset</button>
+    </div>
+  </div>
+  <div id="arrayContainer"></div>
+  <p id="commentary"></p>
+  <script src="js/project09.js"></script>
+</body>
+</html>

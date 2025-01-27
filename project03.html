@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Memory Matching Game</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+      overflow: hidden;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 2.5rem;
+      color: #fff;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    #gameStats {
+      margin-bottom: 20px;
+      font-size: 18px;
+      color: #fff;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 10px 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    #gameContainer {
+      display: grid;
+      grid-template-columns: repeat(4, 100px);
+      grid-gap: 15px;
+    }
+
+    .card {
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(145deg, #f6d365, #fda085);
+      color: #fff;
+      font-size: 2rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 15px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s, background 0.3s;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+    }
+
+    .card.flipped,
+    .card.matched {
+      background: linear-gradient(145deg, #88d498, #56ab2f);
+      cursor: default;
+    }
+
+    .card.hidden {
+      background: #f4f4f4;
+      color: transparent;
+      cursor: default;
+    }
+
+    .card.shake {
+      animation: shake 0.4s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      50% { transform: translateX(10px); }
+      75% { transform: translateX(-10px); }
+    }
+
+    #restartButton {
+      margin-top: 20px;
+      padding: 12px 25px;
+      font-size: 18px;
+      background: #ff6f61;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    #restartButton:hover {
+      background: #d9534f;
+    }
+
+    @keyframes confetti {
+      0% { transform: translateY(-100%); opacity: 1; }
+      100% { transform: translateY(100vh); opacity: 0; }
+    }
+
+    .confetti {
+      position: absolute;
+      top: 0;
+      width: 10px;
+      height: 10px;
+      background: #fff;
+      border-radius: 50%;
+      animation: confetti 2s ease-out infinite;
+      pointer-events: none;
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <h1>Memory Matching Game</h1>
+  <div id="gameStats">
+    <p>Moves: <span id="movesCount">0</span> | Time: <span id="timeElapsed">0</span> seconds</p>
+  </div>
+  <div id="gameContainer"></div>
+  <button id="restartButton">Restart Game</button>
+
+  <script>
+    const gameContainer = document.getElementById("gameContainer");
+    const movesCountElement = document.getElementById("movesCount");
+    const timeElapsedElement = document.getElementById("timeElapsed");
+    const restartButton = document.getElementById("restartButton");
+
+    let cards = [];
+    let firstCard = null;
+    let secondCard = null;
+    let moves = 0;
+    let timeElapsed = 0;
+    let timer = null;
+    let matchedPairs = 0;
+    let isProcessing = false;
+
+    function generateCards() {
+      const icons = ["🍎", "🍌", "🍇", "🍉", "🍓", "🍒", "🥝", "🍍"];
+      const cardValues = [...icons, ...icons];
+      cardValues.sort(() => Math.random() - 0.5);
+
+      gameContainer.innerHTML = "";
+      cards = [];
+
+      cardValues.forEach((value) => {
+        const card = document.createElement("div");
+        card.classList.add("card", "hidden");
+        card.dataset.value = value;
+        card.textContent = value;
+
+        card.addEventListener("click", handleCardClick);
+        gameContainer.appendChild(card);
+        cards.push(card);
+      });
+    }
+
+    function handleCardClick(e) {
+      if (isProcessing) return;
+
+      const card = e.target;
+
+      if (card.classList.contains("flipped") || card.classList.contains("matched")) {
+        return;
+      }
+
+      card.classList.remove("hidden");
+      card.classList.add("flipped");
+
+      if (!firstCard) {
+        firstCard = card;
+      } else if (!secondCard) {
+        secondCard = card;
+
+        moves++;
+        movesCountElement.textContent = moves;
+
+        if (firstCard.dataset.value === secondCard.dataset.value) {
+          firstCard.classList.add("matched");
+          secondCard.classList.add("matched");
+
+          firstCard = null;
+          secondCard = null;
+
+          matchedPairs++;
+          if (matchedPairs === cards.length / 2) {
+            clearInterval(timer);
+            celebrateWin();
+          }
+        } else {
+          isProcessing = true;
+          firstCard.classList.add("shake");
+          secondCard.classList.add("shake");
+
+          setTimeout(() => {
+            firstCard.classList.remove("flipped", "shake");
+            firstCard.classList.add("hidden");
+            secondCard.classList.remove("flipped", "shake");
+            secondCard.classList.add("hidden");
+
+            firstCard = null;
+            secondCard = null;
+            isProcessing = false;
+          }, 1000);
+        }
+      }
+    }
+
+    function startTimer() {
+      timeElapsed = 0;
+      timer = setInterval(() => {
+        timeElapsed++;
+        timeElapsedElement.textContent = timeElapsed;
+      }, 1000);
+    }
+
+    function celebrateWin() {
+      for (let i = 0; i < 100; i++) {
+        const confetti = document.createElement("div");
+        confetti.classList.add("confetti");
+
+        confetti.style.left = Math.random() * 100 + "%";
+        confetti.style.animationDelay = Math.random() * 2 + "s";
+        confetti.style.background = `hsl(${Math.random() * 360}, 100%, 50%)`;
+
+        document.body.appendChild(confetti);
+
+        setTimeout(() => {
+          confetti.remove();
+        }, 2000);
+      }
+
+      setTimeout(() => alert(`You won! Time: ${timeElapsed}s, Moves: ${moves}`), 100);
+    }
+
+    function restartGame() {
+      moves = 0;
+      movesCountElement.textContent = moves;
+
+      matchedPairs = 0;
+      clearInterval(timer);
+      timeElapsedElement.textContent = 0;
+
+      firstCard = null;
+      secondCard = null;
+      isProcessing = false;
+
+      generateCards();
+      startTimer();
+    }
+
+    restartButton.addEventListener("click", restartGame);
+
+    generateCards();
+    startTimer();
+  </script>
+</body>
+</html>

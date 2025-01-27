@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Customizable Digital Clock with Beep</title>
+  <style>
+    /* ===== Basic Reset & Styling ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 50px;
+      background: linear-gradient(135deg, #74ebd5, #acb6e5);
+      color: #333;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 2rem;
+      color: #fff;
+      text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    #clock {
+      font-size: 60px;
+      margin-bottom: 20px;
+      font-weight: bold;
+      color: #fff;
+      text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.4);
+    }
+
+    /* ===== Control Panel Styling ===== */
+    .controls {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      margin-bottom: 30px;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .controls > div {
+      margin: 10px 0;
+    }
+
+    label {
+      font-size: 1rem;
+      font-weight: 500;
+    }
+
+    #timeFormatToggle {
+      transform: scale(1.2);
+      margin-right: 10px;
+    }
+
+    /* ===== Alarm Section Styling ===== */
+    #alarmContainer {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    #alarmImage {
+      width: 150px;
+      height: 150px;
+      background: url('./images/alarm-clock.png') no-repeat center center;
+      background-size: contain;
+    }
+
+    #alarmSection {
+      position: relative;
+      width: 300px;
+      background: rgba(255, 255, 255, 0.8);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 15px;
+      border-radius: 15px;
+      box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    #alarmSection h2 {
+      color: #333;
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+
+    #alarmTime {
+      padding: 5px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+
+    #addAlarmBtn {
+      padding: 8px 12px;
+      font-size: 1rem;
+      background: #28a745;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    #addAlarmBtn:hover {
+      background: #218838;
+    }
+
+    #alarmList {
+      list-style-type: none;
+      margin-top: 10px;
+      padding: 0;
+      max-height: 150px;
+      overflow-y: auto;
+      width: 100%;
+      text-align: center;
+    }
+
+    #alarmList li {
+      background: rgba(255, 255, 255, 0.9);
+      margin: 5px 0;
+      padding: 5px;
+      border-radius: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.9rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .removeAlarm {
+      background: #ff4d4d;
+      color: #fff;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      padding: 3px 6px;
+      transition: background 0.3s;
+    }
+
+    .removeAlarm:hover {
+      background: #d93636;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- The Digital Clock Display -->
+  <h1>Digital Clock</h1>
+  <div id="clock"></div>
+
+  <!-- Controls for clock format, color, font size -->
+  <div class="controls">
+    <div>
+      <label>
+        <input type="checkbox" id="timeFormatToggle">
+        24-Hour Format
+      </label>
+    </div>
+    <div>
+      <label for="colorPicker">Clock Color:</label>
+      <input type="color" id="colorPicker">
+    </div>
+    <div>
+      <label for="fontSizeSelect">Font Size (px):</label>
+      <input type="number" id="fontSizeSelect" value="50" min="10" max="200">
+    </div>
+  </div>
+
+  <!-- Alarm Section -->
+  <div id="alarmContainer">
+    <div id="alarmImage"></div>
+    <div id="alarmSection">
+      <h2>Set Alarm</h2>
+      <input type="time" id="alarmTime" />
+      <button id="addAlarmBtn">Add Alarm</button>
+      <ul id="alarmList"></ul>
+    </div>
+  </div>
+
+  <!-- Link to External JavaScript File -->
+  <script src="js/project01.js"></script>
+</body>
+</html>
